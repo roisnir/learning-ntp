@@ -1,0 +1,7 @@
+.vscode/
+*.o
+*.out
+*.gch
+stuff
+ntp_client
+sniff.pcap
