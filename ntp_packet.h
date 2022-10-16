@@ -1,3 +1,5 @@
+#ifndef NTP_PACKET
+#define NTP_PACKET
 #include <stdint.h>
 
 typedef struct {
@@ -6,12 +8,14 @@ typedef struct {
                            // vn.   Three bits. Version number of the protocol.
                            // mode. Three bits. Client will pick mode 3 for client.
 
-  uint8_t stratum;         // Eight bits. Stratum level of the local clock.
-  uint8_t poll;            // Eight bits. Maximum interval between successive messages.
-  uint8_t precision;       // Eight bits. Precision of the local clock.
+  uint8_t stratum;         // Unsigned Eight bits. Stratum level of the local clock.
+  int8_t poll;            // Signed Eight bits. log2 sec. Maximum interval between successive messages.
+  int8_t precision;       // Signed Eight bits. log2 sec. Precision of the local clock.
 
-  uint32_t rootDelay;      // 32 bits. Total round trip delay time.
-  uint32_t rootDispersion; // 32 bits. Max error aloud from primary clock source.
+  uint16_t rootDelay_s;      // 16 bits. Total round trip delay time secs.
+  uint16_t rootDelay_f;      // 16 bits. Total round trip delay time fraction.
+  uint16_t rootDispersion_s; // 32 bits. Max error aloud from primary clock source secs.
+  uint16_t rootDispersion_f; // 32 bits. Max error aloud from primary clock source fraction.
   uint32_t refId;          // 32 bits. Reference clock identifier.
 
   uint32_t refTm_s;        // 32 bits. Reference time-stamp seconds.
@@ -27,3 +31,5 @@ typedef struct {
   uint32_t txTm_f;         // 32 bits. Transmit time-stamp fraction of a second.
 
 } ntp_packet;              // Total: 384 bits or 48 bytes.
+
+#endif /* NTP_PACKET */
