@@ -3,7 +3,7 @@ CFLAGS=-fdiagnostics-color=always -g -Wall -pedantic
 
 all: ntp_client
 
-ntp_client: ntp_client.o
+ntp_client: ntp_client.o utils.o
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 stuff: stuff.c
