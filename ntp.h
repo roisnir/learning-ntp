@@ -1,5 +1,11 @@
-#ifndef NTP_PACKET
-#define NTP_PACKET
+#ifndef NTP
+#define NTP
+
+#define PORT 123
+#define NTP_MODE(b) (b & 0x7)
+#define NTP_VERSION(b) ((b >> 3) & 0x7)
+#define NTP_LEAP_INDICATOR(b) (b >> 6)
+#define NTP_TIMESTAMP_DELTA 2208988800ul
 #include <stdint.h>
 
 typedef struct {
@@ -32,4 +38,25 @@ typedef struct {
 
 } ntp_packet;              // Total: 384 bits or 48 bytes.
 
-#endif /* NTP_PACKET */
+/*
+Converts an `ntp_packet`'s byte order from network to host.
+packet: pointer to an ntp packet
+*/
+void ntoh_ntp_packet(ntp_packet *packet);
+
+/*
+Converts an `ntp_packet`'s byte order from host to network.
+packet: pointer to an ntp packet
+*/
+void hton_ntp_packet(ntp_packet *packet);
+
+/*
+Converts an ntp timestamp to epoch timestamp
+ntp_ts: seconds past since 1900-1-1 UTC
+returns: seconds past since 1970-1-1 UTC
+*/
+uint32_t ntp_ts_to_epoch(uint32_t ntp_ts);
+
+void print_ntp_packet(ntp_packet *pkt);
+
+#endif /* NTP */
