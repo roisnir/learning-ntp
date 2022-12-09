@@ -104,7 +104,7 @@ int main(int argc, char const *argv[]) {
     }
     else if (argc == 3) {
         if (strcmp(argv[1], "--ip") == 0) {
-            server_ip = inet_network(argv[2]);
+            server_ip = inet_addr(argv[2]);
         } else if (strcmp(argv[1], "--host") == 0) {
             server_url = argv[3];
         } else {
