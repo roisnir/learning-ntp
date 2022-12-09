@@ -1,7 +1,7 @@
 #ifndef NTP
 #define NTP
 
-#define PORT 123
+#define NTP_PORT 123
 #define NTP_MODE(b) (b & 0x7)
 #define NTP_VERSION(b) ((b >> 3) & 0x7)
 #define NTP_LEAP_INDICATOR(b) (b >> 6)

@@ -54,7 +54,7 @@ int query_ntp_server(ntp_packet *res, in_addr_t server_ip) {
     struct sockaddr_in serv_addr;
     serv_addr.sin_addr.s_addr = server_ip;
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
+    serv_addr.sin_port = htons(NTP_PORT);
     memset(serv_addr.sin_zero, '\0', 8);
     int conn =
         connect(socketfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
@@ -93,25 +93,34 @@ int main(int argc, char const *argv[]) {
     const char *server_url = NULL;
     if (argc == 1) {
         server_url = DEFAULT_SERVER;
-    } else if (argc == 3) {
+    } else if (argc == 2 && (strcmp(argv[1], "-h") || strcmp(argv[1], "--help"))) {
+        printf("USAGE: ntp_client [OPTIONS]\r\n"
+        "\tqueries an ntp server. with no arguments, uses DEFAULT_SERVER (%s)\r\n"
+        "\t--ip\r\n\t\tsever's ip\r\n"
+        "\t--host\r\n\t\tsever's hostname\r\n"
+        "\t-h, --help\r\n\t\tshow this message\r\n"
+        , DEFAULT_SERVER);
+        exit(EXIT_SUCCESS);
+    }
+    else if (argc == 3) {
         if (strcmp(argv[1], "--ip") == 0) {
             server_ip = inet_network(argv[2]);
         } else if (strcmp(argv[1], "--host") == 0) {
             server_url = argv[3];
         } else {
             ERROR("Invalid arguments%s", "");
-            exit(-1);
+            exit(EXIT_FAILURE);
         }
     } else {
         ERROR("Invalid arguments%s", "");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     if (server_ip == 0) {
         struct hostent *server = gethostbyname(server_url);
         if (server == NULL) {
             perror("could not find host");
             printf("%s\n", server_url);
-            exit(-1);
+            exit(EXIT_FAILURE);
         }
         DEBUG("addr size: %d", server->h_length);
         DEBUG("ip: %d.%d.%d.%d", (unsigned char)server->h_addr_list[0][0],
@@ -133,7 +142,7 @@ int main(int argc, char const *argv[]) {
         printf("----------------------------------------\n");
     } else {
         ERROR("ntp query failed%s", "");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     while (rc != -1 && res.stratum > 1) {
         rc = query_ntp_server(&res, res.refId);
@@ -145,7 +154,7 @@ int main(int argc, char const *argv[]) {
             printf("----------------------------------------\n");
         }else {
         ERROR("ntp query failed%s", "");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     }
     return 0;
